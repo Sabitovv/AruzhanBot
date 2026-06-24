@@ -1,0 +1,9 @@
+superb-flag-500412-d4-f44c27c3f7a2.json
+credentials.json
+.env
+*.json
+!requirements.txt
+bot.log
+bot2.log
+venv/
+__pycache__/
