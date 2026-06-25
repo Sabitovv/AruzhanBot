@@ -10,7 +10,7 @@ from aiogram.fsm.state import State, StatesGroup
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 from config import BOT_TOKEN, QUESTIONS
-from sheets import append_row, apply_conditional_formatting
+from sheets import append_row, apply_conditional_formatting, set_font_size
 
 logging.basicConfig(level=logging.INFO)
 bot = Bot(token=BOT_TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
@@ -180,6 +180,11 @@ async def main():
         logging.info("Conditional formatting applied")
     except Exception as e:
         logging.warning("Could not apply conditional formatting: %s", e)
+    try:
+        set_font_size(14)
+        logging.info("Font size set to 14")
+    except Exception as e:
+        logging.warning("Could not set font size: %s", e)
     await dp.start_polling(bot)
 
 

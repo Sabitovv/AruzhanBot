@@ -91,6 +91,13 @@ def apply_conditional_formatting():
     spreadsheet.batch_update(body)
 
 
+def set_font_size(size: int = 14):
+    client = get_client()
+    sheet = client.open_by_key(SHEET_ID).sheet1
+    col_letter = chr(ord("A") + len(HEADERS) - 1)
+    sheet.format(f"A:{col_letter}", {"textFormat": {"fontSize": size}})
+
+
 def append_row(data: list):
     sheet = init_table()
     sheet.append_row(data)
