@@ -1,4 +1,5 @@
 import logging
+from datetime import datetime
 
 from aiogram import Bot, Dispatcher, types
 from aiogram.client.default import DefaultBotProperties
@@ -60,6 +61,7 @@ STEP_MSG = "<b>Шаг {step}/{total}</b>\n\n{question}"
 
 DONE_MSG = (
     "<b>Запись добавлена в таблицу!</b>\n\n"
+    "Дата: {date}\n"
     "Аккаунт: {account}\n"
     "Имя: {name}\n"
     "Категория: {category}\n"
@@ -146,6 +148,7 @@ async def process_price(message: types.Message, state: FSMContext):
 @dp.message(OrderForm.total)
 async def process_total(message: types.Message, state: FSMContext):
     data = await state.update_data(total=message.text)
+    data["date"] = datetime.now().strftime("%d.%m.%Y %H:%M")
     await state.clear()
 
     row = [
@@ -157,6 +160,7 @@ async def process_total(message: types.Message, state: FSMContext):
         data["buyout"],
         data["price"],
         data["total"],
+        data["date"],
     ]
 
     try:
