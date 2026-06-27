@@ -24,6 +24,7 @@ class OrderForm(StatesGroup):
     name = State()
     category = State()
     article = State()
+    keywords = State()
     quantity = State()
     buyout = State()
     price = State()
@@ -35,6 +36,7 @@ QUESTIONS_MAP = [
     OrderForm.name,
     OrderForm.category,
     OrderForm.article,
+    OrderForm.keywords,
     OrderForm.quantity,
     OrderForm.buyout,
     OrderForm.price,
@@ -66,6 +68,7 @@ DONE_MSG = (
     "Имя: {name}\n"
     "Категория: {category}\n"
     "Артикул: {article}\n"
+    "Ключевые слова: {keywords}\n"
     "Штук: {quantity}\n"
     "Самовыкуп/раздача: {buyout}\n"
     "Цена за шт/тг: {price}\n"
@@ -116,12 +119,19 @@ async def process_article(message: types.Message, state: FSMContext):
     await message.answer(STEP_MSG.format(step=5, total=TOTAL_STEPS, question=QUESTIONS[4]))
 
 
+@dp.message(OrderForm.keywords)
+async def process_keywords(message: types.Message, state: FSMContext):
+    await state.update_data(keywords=message.text)
+    await state.set_state(QUESTIONS_MAP[5])
+    await message.answer(STEP_MSG.format(step=6, total=TOTAL_STEPS, question=QUESTIONS[5]))
+
+
 @dp.message(OrderForm.quantity)
 async def process_quantity(message: types.Message, state: FSMContext):
     await state.update_data(quantity=message.text)
-    await state.set_state(QUESTIONS_MAP[5])
+    await state.set_state(QUESTIONS_MAP[6])
     await message.answer(
-        STEP_MSG.format(step=6, total=TOTAL_STEPS, question=QUESTIONS[5]),
+        STEP_MSG.format(step=7, total=TOTAL_STEPS, question=QUESTIONS[6]),
         reply_markup=BUYOUT_KEYBOARD,
     )
 
@@ -130,9 +140,9 @@ async def process_quantity(message: types.Message, state: FSMContext):
 async def process_buyout_callback(callback: types.CallbackQuery, state: FSMContext):
     value = "Самовыкуп" if callback.data == "buyout_sam" else "Раздача"
     await state.update_data(buyout=value)
-    await state.set_state(QUESTIONS_MAP[6])
+    await state.set_state(QUESTIONS_MAP[7])
     await callback.message.edit_text(
-        STEP_MSG.format(step=7, total=TOTAL_STEPS, question=QUESTIONS[6]),
+        STEP_MSG.format(step=8, total=TOTAL_STEPS, question=QUESTIONS[7]),
         reply_markup=None,
     )
     await callback.answer()
@@ -141,8 +151,8 @@ async def process_buyout_callback(callback: types.CallbackQuery, state: FSMConte
 @dp.message(OrderForm.price)
 async def process_price(message: types.Message, state: FSMContext):
     await state.update_data(price=message.text)
-    await state.set_state(QUESTIONS_MAP[7])
-    await message.answer(STEP_MSG.format(step=8, total=TOTAL_STEPS, question=QUESTIONS[7]))
+    await state.set_state(QUESTIONS_MAP[8])
+    await message.answer(STEP_MSG.format(step=9, total=TOTAL_STEPS, question=QUESTIONS[8]))
 
 
 @dp.message(OrderForm.total)
@@ -156,6 +166,7 @@ async def process_total(message: types.Message, state: FSMContext):
         data["name"],
         data["category"],
         data["article"],
+        data["keywords"],
         data["quantity"],
         data["buyout"],
         data["price"],
